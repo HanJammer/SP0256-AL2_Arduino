@@ -256,40 +256,60 @@ as much as the bench board allows.
 
 ## Build
 
-Because the repository keeps multiple root sketches, compile each sketch through a
-temporary one-sketch folder.
+Each example is already a complete Arduino sketch folder. Do not copy only the
+`.ino` file into another directory; that separates the sketch from its local
+`src/` support files and causes missing include errors.
 
-Uno:
+### Arduino IDE On Windows
 
-```sh
-tmp="$(mktemp -d /tmp/sp0256-uno-compile.XXXXXX)"
-sketch="$tmp/sp0256_uno"
-mkdir "$sketch"
-cp -a libraries "$sketch/"
-cp Uno_SP0256-AL2-HelloWorld.ino "$sketch/sp0256_uno.ino"
-arduino-cli compile -b arduino:avr:uno "$sketch"
-rm -rf "$tmp"
+1. Install Arduino IDE 2.x.
+2. Open one of the sketch `.ino` files from its folder, for example:
+   `Uno_SP0256-AL2-SerialSpeech\Uno_SP0256-AL2-SerialSpeech.ino`.
+3. Select the board:
+   - Uno examples: **Tools > Board > Arduino AVR Boards > Arduino Uno**.
+   - Mega examples: **Tools > Board > Arduino AVR Boards > Arduino Mega or Mega 2560**.
+4. Select the COM port under **Tools > Port**.
+5. Click **Verify** to compile, then **Upload** if the wiring is ready.
+6. For the serial examples, open **Tools > Serial Monitor**, set baud to
+   `115200`, type a line, and press Enter. Prefix a line with `:` to send raw
+   allophone symbols, for example `:HH1 EH LL OW PA5`.
+
+Windows path example:
+
+```text
+C:\Users\<you>\Documents\Arduino\SP0256-AL2_Arduino\
+  Uno_SP0256-AL2-SerialSpeech\
+    Uno_SP0256-AL2-SerialSpeech.ino
+    SP0256-AL2-SerialSpeechCommon.h
+    src\SP0256-AL2-SpeechChip\
 ```
 
-For the serial example, copy `SP0256-AL2-SerialSpeechCommon.h` into the same
-temporary sketch folder and replace the copied `.ino` file with
-`Uno_SP0256-AL2-SerialSpeech.ino`.
+Open the `.ino` inside the sketch folder shown above. If Arduino IDE offers to
+move the sketch into another folder, cancel that and open the folder version
+from this repository instead.
 
-Mega2560:
+### Linux / Arduino CLI
+
+Install Arduino CLI and the AVR core, then compile the sketch folders directly:
 
 ```sh
-tmp="$(mktemp -d /tmp/sp0256-mega-compile.XXXXXX)"
-sketch="$tmp/sp0256_mega"
-mkdir "$sketch"
-cp -a libraries "$sketch/"
-cp Mega2560_SP0256-AL2-HelloWorld.ino "$sketch/sp0256_mega.ino"
-arduino-cli compile -b arduino:avr:mega "$sketch"
-rm -rf "$tmp"
+arduino-cli core install arduino:avr
+
+arduino-cli compile --fqbn arduino:avr:uno Uno_SP0256-AL2-HelloWorld
+arduino-cli compile --fqbn arduino:avr:uno Uno_SP0256-AL2-SerialSpeech
+
+arduino-cli compile --fqbn arduino:avr:mega Mega2560_SP0256-AL2-HelloWorld
+arduino-cli compile --fqbn arduino:avr:mega Mega2560_SP0256-AL2-SerialSpeech
 ```
 
-For the serial example, copy `SP0256-AL2-SerialSpeechCommon.h` into the same
-temporary sketch folder and replace the copied `.ino` file with
-`Mega2560_SP0256-AL2-SerialSpeech.ino`.
+Upload examples:
+
+```sh
+arduino-cli upload -p /dev/ttyACM0 --fqbn arduino:avr:uno Uno_SP0256-AL2-SerialSpeech
+arduino-cli upload -p /dev/ttyACM0 --fqbn arduino:avr:mega Mega2560_SP0256-AL2-SerialSpeech
+```
+
+Replace `/dev/ttyACM0` with the port reported by `arduino-cli board list`.
 
 Verified build sizes:
 

@@ -38,7 +38,7 @@ ALLOPHONES.md
 EXAMPLE_WORDS.md
 SCHEMATIC_NOTES.md
 libraries/
-  SP0256-AL2-SoundChip/
+  SP0256-AL2-SpeechChip/
     Uno_SP0256-AL2-SpeechChip.h
     Uno_SP0256-AL2-SpeechChip.cpp
     Mega2560_SP0256-AL2-SpeechChip.h
@@ -46,7 +46,7 @@ libraries/
 ```
 
 The root `.ino` sketches include their matching `.h` and `.cpp` files directly
-from `libraries/SP0256-AL2-SoundChip/`. This keeps the repository flat and
+from `libraries/SP0256-AL2-SpeechChip/`. This keeps the repository flat and
 avoids Arduino library auto-selection confusion between Uno and Mega variants.
 
 ## Examples

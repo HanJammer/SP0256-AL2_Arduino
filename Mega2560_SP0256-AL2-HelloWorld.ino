@@ -7,8 +7,8 @@
  * D2, and S for conflict reasons.
  */
 
-#include "libraries/SP0256-AL2-SoundChip/Mega2560_SP0256-AL2-SpeechChip.h"
-#include "libraries/SP0256-AL2-SoundChip/Mega2560_SP0256-AL2-SpeechChip.cpp"
+#include "libraries/SP0256-AL2-SpeechChip/Mega2560_SP0256-AL2-SpeechChip.h"
+#include "libraries/SP0256-AL2-SpeechChip/Mega2560_SP0256-AL2-SpeechChip.cpp"
 
 SpeechChip SpeechChip(8, 10); // ALD on D8, reset pulse on D10
 

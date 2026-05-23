@@ -11,6 +11,7 @@ static uint8_t serialSpeechLen = 0;
 static uint8_t serialSpeechUtfLead = 0;
 static uint32_t serialSpeechLastByteAt = 0;
 static const uint16_t serialSpeechIdleSubmitMs = 900;
+static bool serialSpeechLastWasCr = false;
 
 static void speakPhone(const char *phone) {
   if (strcmp(phone, "PA1") == 0) speech.PA1();
@@ -215,40 +216,43 @@ static bool speakRawAllophones(char *line) {
 }
 
 static void speakSanitizedLine(char *line) {
+  bool spoken = false;
   if (line[0] == ':') {
     Serial.println(F("RAW ALLOPHONES"));
-    speakRawAllophones(line + 1);
-    return;
+    spoken = speakRawAllophones(line + 1);
+  } else {
+    char word[22];
+    uint8_t wordLen = 0;
+    for (uint8_t i = 0;; i++) {
+      char ch = line[i];
+      bool end = ch == '\0';
+      bool wordChar = (ch >= 'a' && ch <= 'z') || (ch >= '0' && ch <= '9');
+      if (wordChar && wordLen < sizeof(word) - 1) {
+        word[wordLen++] = ch;
+      } else {
+        if (wordLen > 0) {
+          word[wordLen] = '\0';
+          if (spoken) {
+            speech.PA3();
+          }
+          speakWord(word);
+          spoken = true;
+          wordLen = 0;
+        }
+        if (ch == '.' || ch == '!' || ch == '?') {
+          speech.PA5();
+        } else if (ch == ',' || ch == ':' || ch == ';') {
+          speech.PA4();
+        }
+      }
+      if (end) {
+        break;
+      }
+    }
   }
 
-  char word[22];
-  uint8_t wordLen = 0;
-  bool spokeSomething = false;
-  for (uint8_t i = 0;; i++) {
-    char ch = line[i];
-    bool end = ch == '\0';
-    bool wordChar = (ch >= 'a' && ch <= 'z') || (ch >= '0' && ch <= '9');
-    if (wordChar && wordLen < sizeof(word) - 1) {
-      word[wordLen++] = ch;
-    } else {
-      if (wordLen > 0) {
-        word[wordLen] = '\0';
-        if (spokeSomething) {
-          speech.PA3();
-        }
-        speakWord(word);
-        spokeSomething = true;
-        wordLen = 0;
-      }
-      if (ch == '.' || ch == '!' || ch == '?') {
-        speech.PA5();
-      } else if (ch == ',' || ch == ':' || ch == ';') {
-        speech.PA4();
-      }
-    }
-    if (end) {
-      break;
-    }
+  if (spoken) {
+    speech.PA5();
   }
 }
 
@@ -306,6 +310,7 @@ static void printSerialSpeechHelp() {
 static void setupSerialSpeechExample() {
   Serial.begin(115200);
   speech.reset();
+  speech.PA5();
   printSerialSpeechHelp();
 }
 
@@ -317,6 +322,7 @@ static void submitSerialSpeechLine() {
   speakSanitizedLine(serialSpeechLine);
   serialSpeechLen = 0;
   serialSpeechUtfLead = 0;
+  serialSpeechLastWasCr = false;
   Serial.print(F("> "));
 }
 
@@ -325,7 +331,9 @@ static void loopSerialSpeechExample() {
     uint8_t raw = Serial.read();
     serialSpeechLastByteAt = millis();
     if (raw == '\r') {
-      continue;
+      submitSerialSpeechLine();
+      serialSpeechLastWasCr = true;
+      return;
     }
     if (raw == '\b' || raw == 127) {
       if (serialSpeechLen > 0) {
@@ -334,10 +342,15 @@ static void loopSerialSpeechExample() {
       continue;
     }
     if (raw == '\n') {
+      if (serialSpeechLastWasCr) {
+        serialSpeechLastWasCr = false;
+        continue;
+      }
       submitSerialSpeechLine();
       return;
     }
 
+    serialSpeechLastWasCr = false;
     char ch = sanitizeInputByte(raw);
     if (ch == 0) {
       continue;

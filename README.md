@@ -69,6 +69,8 @@ library auto-selection confusion between Uno and Mega variants.
   allophone approximation.
 - In the serial examples, prefix input with `:` to send raw allophone symbols:
   `:HH1 EH LL OW PA5`.
+- The serial examples accept LF, CR, and CRLF line endings. This covers Arduino
+  IDE Serial Monitor and terminal programs such as PuTTY.
 
 The serial examples are small interactive demos, not full text-to-speech
 engines. They include a small word list plus rough grapheme fallback. Serious
@@ -272,9 +274,9 @@ Each example is already a complete Arduino sketch folder. Do not copy only the
 5. Click **Verify** to compile, then **Upload** if the wiring is ready.
 6. For the serial examples, open **Tools > Serial Monitor**, set baud to
    `115200`, type a line, and press Enter or click Send. The sketch accepts
-   both newline-terminated input and Arduino IDE's `No line ending` mode after
-   a short idle timeout. Prefix a line with `:` to send raw allophone symbols,
-   for example `:HH1 EH LL OW PA5`.
+   LF, CR, CRLF, and Arduino IDE's `No line ending` mode after a short idle
+   timeout. Prefix a line with `:` to send raw allophone symbols, for example
+   `:HH1 EH LL OW PA5`.
 
 Windows path example:
 

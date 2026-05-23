@@ -9,6 +9,8 @@ extern SpeechChip speech;
 static char serialSpeechLine[96];
 static uint8_t serialSpeechLen = 0;
 static uint8_t serialSpeechUtfLead = 0;
+static uint32_t serialSpeechLastByteAt = 0;
+static const uint16_t serialSpeechIdleSubmitMs = 900;
 
 static void speakPhone(const char *phone) {
   if (strcmp(phone, "PA1") == 0) speech.PA1();
@@ -296,7 +298,7 @@ static char sanitizeInputByte(uint8_t b) {
 
 static void printSerialSpeechHelp() {
   Serial.println(F("SP0256-AL2 serial speech ready."));
-  Serial.println(F("Type text and press Enter. UTF-8 is flattened to ASCII where possible."));
+  Serial.println(F("Type text and press Enter or Send. UTF-8 is flattened to ASCII where possible."));
   Serial.println(F("Prefix ':' to send raw allophones, e.g. :HH1 EH LL OW PA5"));
   Serial.print(F("> "));
 }
@@ -307,9 +309,21 @@ static void setupSerialSpeechExample() {
   printSerialSpeechHelp();
 }
 
+static void submitSerialSpeechLine() {
+  serialSpeechLine[serialSpeechLen] = '\0';
+  Serial.println();
+  Serial.print(F("ASCII: "));
+  Serial.println(serialSpeechLine);
+  speakSanitizedLine(serialSpeechLine);
+  serialSpeechLen = 0;
+  serialSpeechUtfLead = 0;
+  Serial.print(F("> "));
+}
+
 static void loopSerialSpeechExample() {
   while (Serial.available() > 0) {
     uint8_t raw = Serial.read();
+    serialSpeechLastByteAt = millis();
     if (raw == '\r') {
       continue;
     }
@@ -320,14 +334,7 @@ static void loopSerialSpeechExample() {
       continue;
     }
     if (raw == '\n') {
-      serialSpeechLine[serialSpeechLen] = '\0';
-      Serial.println();
-      Serial.print(F("ASCII: "));
-      Serial.println(serialSpeechLine);
-      speakSanitizedLine(serialSpeechLine);
-      serialSpeechLen = 0;
-      serialSpeechUtfLead = 0;
-      Serial.print(F("> "));
+      submitSerialSpeechLine();
       return;
     }
 
@@ -342,6 +349,9 @@ static void loopSerialSpeechExample() {
       serialSpeechLine[serialSpeechLen++] = ch;
       Serial.write(ch);
     }
+  }
+  if (serialSpeechLen > 0 && millis() - serialSpeechLastByteAt >= serialSpeechIdleSubmitMs) {
+    submitSerialSpeechLine();
   }
 }
 

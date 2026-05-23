@@ -1,0 +1,112 @@
+/* 
+ *SpeechChip.h Header file for the SpeechChip library by Jacob Field.
+ */
+
+#ifndef MEGA2560_SP0256_AL2_SPEECHCHIP_H
+#define MEGA2560_SP0256_AL2_SPEECHCHIP_H
+
+#include "Arduino.h"
+
+// ATmega2560 headers define PA1..PA5 as numeric port-bit macros. The SP0256
+// library already uses PA1..PA5 as pause allophone method names, so remove the
+// macros after Arduino.h is loaded.
+#ifdef PA1
+#undef PA1
+#endif
+#ifdef PA2
+#undef PA2
+#endif
+#ifdef PA3
+#undef PA3
+#endif
+#ifdef PA4
+#undef PA4
+#endif
+#ifdef PA5
+#undef PA5
+#endif
+
+class SpeechChip
+{
+  public:
+
+	SpeechChip(int ALD);
+	SpeechChip(int ALD, int RESET);
+
+	void reset();
+
+	void NN1();
+	void OR();
+	void HH2();
+	void HH1();
+	void EH();
+	void EL();
+	void LL();
+	void OW();
+	void PA5();
+	void BB1();
+	void AX();
+	void IY();
+	void NN2();
+	void ER1();
+	void AE();
+	void AA();
+	void AY();
+	void KK1();
+	void AO();
+	void S();
+	void EY();
+	void PA4();
+	void PA3();
+	void PA2();
+	void PA1();
+	void PP();
+	void D1();
+	void D2();
+	void TT2();
+	void UW1();
+	void MM();
+	void YY2();
+	void IH();
+	void TT1();
+	void ZZ();
+	void NG();
+	void GG1();
+	void GG2();
+	void GG3();
+	void FF();
+	void KK2();
+	void KK3();
+	void CH();
+	void TH();
+	void ZH();
+	void RR1();
+	void RR2();
+	void OY();
+	void JH();
+	void DH1();
+	void DH2();
+	void UW2();
+	void YY1();
+	void BB2();
+	void UH();
+	void AW();
+	void VV();
+	void SH();
+	void WW();
+	void XR();
+	void WH();
+	void ER2();
+	void AR();
+	void YR();
+	
+  private:
+
+    void AddressLoad(int delayTime);
+    int _ALD;
+    int _RESET;
+
+};
+
+
+#endif

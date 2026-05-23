@@ -6,8 +6,7 @@
  * conflict reasons.
  */
 
-#include "libraries/SP0256-AL2-SpeechChip/Uno_SP0256-AL2-SpeechChip.h"
-#include "libraries/SP0256-AL2-SpeechChip/Uno_SP0256-AL2-SpeechChip.cpp"
+#include "src/SP0256-AL2-SpeechChip/Uno_SP0256-AL2-SpeechChip.h"
 
 SpeechChip SpeechChip(8, 10); // ALD on D8, reset pulse on D10
 

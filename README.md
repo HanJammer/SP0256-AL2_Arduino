@@ -29,11 +29,20 @@ Datasheet schematic notes:
 ## Repository Layout
 
 ```text
-Uno_SP0256-AL2-HelloWorld.ino
-Mega2560_SP0256-AL2-HelloWorld.ino
-Uno_SP0256-AL2-SerialSpeech.ino
-Mega2560_SP0256-AL2-SerialSpeech.ino
-SP0256-AL2-SerialSpeechCommon.h
+Uno_SP0256-AL2-HelloWorld/
+  Uno_SP0256-AL2-HelloWorld.ino
+  src/SP0256-AL2-SpeechChip/
+Uno_SP0256-AL2-SerialSpeech/
+  Uno_SP0256-AL2-SerialSpeech.ino
+  SP0256-AL2-SerialSpeechCommon.h
+  src/SP0256-AL2-SpeechChip/
+Mega2560_SP0256-AL2-HelloWorld/
+  Mega2560_SP0256-AL2-HelloWorld.ino
+  src/SP0256-AL2-SpeechChip/
+Mega2560_SP0256-AL2-SerialSpeech/
+  Mega2560_SP0256-AL2-SerialSpeech.ino
+  SP0256-AL2-SerialSpeechCommon.h
+  src/SP0256-AL2-SpeechChip/
 ALLOPHONES.md
 EXAMPLE_WORDS.md
 SCHEMATIC_NOTES.md
@@ -45,15 +54,16 @@ libraries/
     Mega2560_SP0256-AL2-SpeechChip.cpp
 ```
 
-The root `.ino` sketches include their matching `.h` and `.cpp` files directly
-from `libraries/SP0256-AL2-SpeechChip/`. This keeps the repository flat and
-avoids Arduino library auto-selection confusion between Uno and Mega variants.
+Each example is a complete Arduino sketch folder. Open the `.ino` inside the
+folder instead of copying a standalone `.ino` elsewhere. The local `src/` copy
+keeps Arduino IDE from moving the sketch away from its support files and avoids
+library auto-selection confusion between Uno and Mega variants.
 
 ## Examples
 
-- `Uno_SP0256-AL2-HelloWorld.ino` and `Mega2560_SP0256-AL2-HelloWorld.ino`
+- `Uno_SP0256-AL2-HelloWorld/` and `Mega2560_SP0256-AL2-HelloWorld/`
   repeat a fixed "hello world" phrase.
-- `Uno_SP0256-AL2-SerialSpeech.ino` and `Mega2560_SP0256-AL2-SerialSpeech.ino`
+- `Uno_SP0256-AL2-SerialSpeech/` and `Mega2560_SP0256-AL2-SerialSpeech/`
   read text from Serial Monitor at 115200 baud. Type text, press Enter, and the
   sketch sanitizes UTF-8 input to ASCII where possible before speaking a simple
   allophone approximation.
